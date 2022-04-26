@@ -1,76 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <div id="container">
         <h1> Search Pokemon</h1>
-        <input type="number" id="search">
-    </div>
-    <tbody>
+        <input type="text" id="search">
+        <button onclick="funSearch()">search</button>
 
-    </tbody>
+    </div>
+    <div id="found">
+
+    </div>
+   <div id="data">
+
+   </div>
 </body>
 <script>
-    // var item = document.querySelector("#items");
-    
     var url = "https://pokeapi.co/api/v2/pokemon"
 
-    function fetchApi(){
-        fetch(url).then(response =>{
+    function fetchApi() {
+        fetch(url).then(response => {
             return response.json();
-        }).then(result =>{
-            console.log(result)
-            localStorage.setItem("pokemon",JSON.stringify(result.results));
+        }).then(result => {
+            localStorage.setItem("pokemon", JSON.stringify(result.results));
         })
     }
-    var data =JSON.parse(localStorage.getItem('pokemon'))||[];
-    console.log(data.name)
-    function display(data){
-        var idno = 1;
-        document.querySelector("tbody").innerContent="";
-        var li = document.createElement("li");
-        data.forEach(element => {
-             var row = document.createElement('tr');
+    var data = JSON.parse(localStorage.getItem('pokemon')) || [];
 
-            var id = document.createElement('td');
-            id.innerText = idno++;
+    function display(data) {
+        document.querySelector("#data").innerHTML = "";
+        
+        for (var i = 0; i < 20; i++) {
+            var para = document.createElement("p");
 
-            var name = document.createElement('td');
-            name.innerText = element.name
-            console.log(data.name)
-
-            row.append(id, name)
-            document.querySelector('tbody').append(row)
-        });{
-          
-        };
-        // box.append(row);
-        // box.append(li1);
-
-    }
+            para.innerText = data[i].name;
+             document.querySelector('#data').append(para)
+        }
+    };
+ 
     display(data)
-   fetchApi();
-function find(){
+    window.load = fetchApi();
+function funSearch(){
     event.preventDefault();
-    var id = Document.querySelector("#search").value;
-if(id > 20){
-    alert("enter no between 1 to 20");
-}
-else{
-    url = `https://pokeapi.co/api/v2/pokemon/${id}/`;
-    fetch(url).then(response=>{
+    document.querySelector("#found").innerHTML="";
+    var searchPokemon = document.querySelector("#search").value;
+    
+    fetch(`https://pokeapi.co/api/v2/pokemon/${searchPokemon}`).then(response=>{
         response.json();
-    }).then(result =>{
+    }).then(result=>{
+        return result;
         console.log(result);
     })
-}
+
+    // console.log(data);
+
+    // event.preventDefault();
+
+    // var id = document.querySelector("#search").value;
+    // console.log(id);
+    // var data = document.querySelector("#data").innerHTML = "";
+    // for(var i = 0; i < 20; i++){
+    //     if(id == data[i].name){
+    //        document.querySelector("#data").innerText = id;
+    //         break;
+    //     }
+    // }
+    // if(i == 19){
+    //     alert("pokemon not found");    
+    // }
+    
 }
 
-    
+
 </script>
+
 </html>
