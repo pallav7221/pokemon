@@ -6,11 +6,45 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        #container{
+            text-align: center;
+        }
+        #container>h1{
+            font-size: 40px;
+            text-decoration: underline;
+            background-color: antiquewhite;
+            padding: 10px;
+        }
+        #container>input{
+            font-size: 20px;
+            padding: 5px;
+        }
+        #container>button{
+            margin: auto;
+            font-size: 20px;
+            margin-top: 10px;
+            width: 80px;
+            background-color: black;
+            color: white;
+            padding: 6px;
+            display: block;
+            border-radius: 7px;
+        }
+        #found{
+            background-color: beige;
+            width: 90%;
+            margin: auto;
+            margin-top: 20px;
+            font-size: 20px;
+            padding: 5px;
+        }
+    </style>
 </head>
 
 <body>
     <div id="container">
-        <h1> Search Pokemon</h1>
+        <h1> Search Pokemon App</h1>
         <input type="text" id="search">
         <button onclick="funSearch()">search</button>
 
@@ -18,13 +52,14 @@
     <div id="found">
 
     </div>
-   <div id="data">
+    <div id="data">
 
-   </div>
+    </div>
 </body>
 <script>
     var url = "https://pokeapi.co/api/v2/pokemon"
 
+    var count = localStorage.getItem("count") || 1;
     function fetchApi() {
         fetch(url).then(response => {
             return response.json();
@@ -32,51 +67,62 @@
             localStorage.setItem("pokemon", JSON.stringify(result.results));
         })
     }
+    if (count == 1) {
+        fetchApi();
+    }
+
     var data = JSON.parse(localStorage.getItem('pokemon')) || [];
-
-    function display(data) {
-        document.querySelector("#data").innerHTML = "";
-        
-        for (var i = 0; i < 20; i++) {
-            var para = document.createElement("p");
-
-            para.innerText = data[i].name;
-             document.querySelector('#data').append(para)
-        }
-    };
- 
-    display(data)
-    window.load = fetchApi();
-function funSearch(){
-    event.preventDefault();
-    document.querySelector("#found").innerHTML="";
-    var searchPokemon = document.querySelector("#search").value;
-    
-    fetch(`https://pokeapi.co/api/v2/pokemon/${searchPokemon}`).then(response=>{
-        response.json();
-    }).then(result=>{
-        return result;
-        console.log(result);
-    })
-
     // console.log(data);
 
-    // event.preventDefault();
+    document.querySelector("#data").innerHTML = "";
+    data.forEach((element, idx) => {
+        var para = document.createElement("p");
 
-    // var id = document.querySelector("#search").value;
-    // console.log(id);
-    // var data = document.querySelector("#data").innerHTML = "";
-    // for(var i = 0; i < 20; i++){
-    //     if(id == data[i].name){
-    //        document.querySelector("#data").innerText = id;
-    //         break;
-    //     }
-    // }
-    // if(i == 19){
-    //     alert("pokemon not found");    
-    // }
-    
-}
+        para.innerText = element.name;
+        document.querySelector('#data').append(para)
+
+    });
+
+
+
+    function funSearch() {
+        document.querySelector("#found").innerHTML = "";
+        var searchPokemon = document.querySelector("#search").value;
+
+        data.forEach((ele, idx) => {
+            if (searchPokemon == ele.name) {
+                fetch(ele.url).then(response => {
+                    return response.json()
+                }).then(result => {
+                    var name = document.createElement('p');
+                    name.innerHTML = `Name : ${result.species.name}`;
+
+                    var id = document.createElement('p');
+                    id.innerHTML = `Id : ${result.id}`;
+
+                    var weight = document.createElement('p');
+                    weight.innerHTML = `Weight : ${result.weight}`;
+
+                    var height = document.createElement('p');
+                    height.innerHTML = `Height : ${result.height}`;
+
+                    var ability= document.createElement('p');
+                    ability.innerHTML = "Abilities: " 
+                    result.abilities.forEach(ele =>{
+                        ability.innerHTML += ele.ability.name +",";
+                    })
+                    var moes = document.createElement('p');
+                    moes.innerHTML = "Moves : ";
+                    result.moves.forEach(ele => {
+                        moes.innerHTML += ele.move.name +",";
+                    })
+                    document.querySelector('#found').append(name,id,weight,height,ability,moes)
+
+                })
+            }
+        })
+
+    }
 
 
 </script>
